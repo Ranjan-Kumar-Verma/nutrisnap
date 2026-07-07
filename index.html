@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NutriSnap Pro - Advanced Nutrition Workspace</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js CDN for Progress Analytics Charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
@@ -23,7 +21,6 @@
 </head>
 <body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased min-h-screen transition-colors duration-200">
 
-    <!-- Top Navigation Bar -->
     <nav class="sticky top-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm px-6 py-4 flex items-center justify-between transition-colors">
         <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-[#4CAF50] flex items-center justify-center text-white font-black text-xl shadow-sm">N</div>
@@ -36,7 +33,6 @@
                 <span class="w-2 h-2 rounded-full bg-[#43A047]"></span>
                 STREAK: 5 DAYS
             </div>
-            <!-- Theme Toggle Button -->
             <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition" title="Toggle Theme">
                 <svg id="theme-icon-light" class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.344l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg>
                 <svg id="theme-icon-dark" class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -44,15 +40,11 @@
         </div>
     </nav>
 
-    <!-- Main Content Workspace Layout -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            <!-- LEFT & CENTER COLUMNS: Metrics & Meal Tracks -->
             <div class="lg:col-span-2 space-y-8">
-                <!-- Metrics Panel Card Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <!-- Calorie Tracker Snapshot -->
                     <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 flex flex-col justify-between transition-colors">
                         <div>
                             <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Today's Calories</h3>
@@ -72,7 +64,6 @@
                         </div>
                     </div>
 
-                    <!-- Macronutrients Grid -->
                     <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 space-y-4 transition-colors">
                         <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Macronutrients Target Performance</h3>
                         <div>
@@ -99,7 +90,6 @@
                     </div>
                 </div>
 
-                <!-- Today's Meals Timeline -->
                 <div class="space-y-6">
                     <h2 class="text-xl font-bold tracking-tight text-gray-800 dark:text-white">Today's Meal Records</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -135,7 +125,6 @@
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN: Personal Analytics Profile & Manual Configuration Controls -->
             <div class="space-y-8">
                 <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 space-y-6 transition-colors">
                     <div class="border-b border-gray-100 dark:border-gray-800 pb-3">
@@ -143,13 +132,11 @@
                         <p class="text-xs text-gray-400 mt-0.5">Calculate or assign macro targets</p>
                     </div>
 
-                    <!-- Target Configuration Tabs -->
                     <div class="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl text-xs font-bold">
                         <button id="mode-auto" onclick="setGoalConfigMode('auto')" class="flex-1 py-2 text-center rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-xs transition">Auto Calculate</button>
                         <button id="mode-manual" onclick="setGoalConfigMode('manual')" class="flex-1 py-2 text-center rounded-lg text-gray-500 dark:text-gray-400 transition">Manual Target</button>
                     </div>
 
-                    <!-- Auto Calculation Window -->
                     <div id="form-auto-panel" class="space-y-4">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
@@ -192,10 +179,8 @@
                             </select>
                         </div>
                         
-                        <!-- Updated Calculation Accent Color -->
                         <button onclick="calculateStagedMacros()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-xs font-bold rounded-xl transition shadow-sm">Calculate Required Macros</button>
                         
-                        <!-- Staged Calculation Preview Panel -->
                         <div id="staged-results-box" class="hidden p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-xl space-y-3">
                             <span class="text-[10px] font-black text-gray-400 uppercase block">Estimated Requirements Sheet</span>
                             <div class="grid grid-cols-2 gap-2 text-xs">
@@ -208,7 +193,6 @@
                         </div>
                     </div>
 
-                    <!-- Manual Target Configuration Form View -->
                     <div id="form-manual-panel" class="space-y-4 hidden">
                         <div>
                             <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Target Calories (kcal)</label>
@@ -232,27 +216,28 @@
                     </div>
                 </div>
 
-                <!-- FOOD DATABASE CATALOG COMPONENT -->
                 <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 space-y-4 transition-colors">
                     <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
-                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Database Memory Storage</h3>
-                        <span id="db-count" class="text-xs px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 font-bold">5 Items</span>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Database Memory Storage</h3>
+                            <span id="db-count" class="text-[11px] px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 font-bold text-gray-600 dark:text-gray-300">5 Items</span>
+                        </div>
+                        <button onclick="toggleDatabaseVisibility()" id="toggle-db-btn" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors focus:outline-none">
+                            Show List
+                        </button>
                     </div>
-                    <div id="database-catalog-view" class="max-h-72 overflow-y-auto space-y-2 pr-1 divide-y divide-gray-100 dark:divide-gray-800">
-                        <!-- Hydrated dynamically by engine loop -->
-                    </div>
+                    <div id="database-catalog-view" class="hidden max-h-72 overflow-y-auto space-y-2 pr-1 divide-y divide-gray-100 dark:divide-gray-800 transition-all duration-300">
+                        </div>
                 </div>
             </div>
         </div>
 
-        <!-- ANALYTICS ENGINE INFRASTRUCTURE PANELS -->
         <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 space-y-6 transition-colors">
             <div class="border-b border-gray-100 dark:border-gray-800 pb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <h2 class="text-lg font-black text-gray-800 dark:text-white uppercase tracking-tight">Performance Progress Analytics</h2>
                     <p class="text-xs text-gray-400">Nutritional metrics patterns and customized entry trend graphs</p>
                 </div>
-                <!-- Weekly Aggregated Totals Panel Display -->
                 <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl px-4 py-2 border dark:border-gray-800 text-xs flex flex-wrap gap-x-4 gap-y-1">
                     <div>Weekly Target Reserves: <span id="weekly-cal-target" class="font-bold text-gray-800 dark:text-white">--</span> kcal</div>
                     <div>Protein: <span id="weekly-pro-target" class="font-bold text-[#2196F3]">--</span></div>
@@ -261,7 +246,6 @@
                 </div>
             </div>
 
-            <!-- Chart Workspaces Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="bg-gray-50 dark:bg-gray-950 p-4 rounded-xl border border-gray-100 dark:border-gray-800 flex flex-col justify-between">
                     <div>
@@ -279,7 +263,6 @@
                         </div>
                     </div>
                     
-                    <!-- Dedicated User Data Entry Weight Logger -->
                     <div class="mt-4 p-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl flex items-end gap-3 flex-wrap sm:flex-nowrap">
                         <div class="w-full sm:w-auto flex-1">
                             <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Date Logged</label>
@@ -296,7 +279,6 @@
         </div>
     </main>
 
-    <!-- MODAL ARCHITECTURE -->
     <div id="log-modal" class="hidden fixed inset-0 z-50 bg-gray-900/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-xl w-full shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col transition-colors">
             
@@ -308,7 +290,6 @@
                 <button onclick="closeLogModal()" class="p-1.5 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400">✕</button>
             </div>
 
-            <!-- Modal Selection Tabs -->
             <div class="flex border-b border-gray-100 dark:border-gray-800 text-xs font-bold text-gray-500 bg-gray-50/50 dark:bg-gray-800/20">
                 <button id="tab-search" onclick="switchModalTab('search')" class="flex-1 py-3 text-center border-b-2 border-[#4CAF50] text-[#4CAF50]">Search Database</button>
                 <button id="tab-custom" onclick="switchModalTab('custom')" class="flex-1 py-3 text-center border-b-2 border-transparent hover:text-gray-700 dark:hover:text-gray-300">Quick Custom</button>
@@ -316,7 +297,6 @@
             </div>
 
             <div class="p-6 overflow-y-auto max-h-[60vh] space-y-6">
-                <!-- TAB WORKSPACE A: Core Food Search & Scale -->
                 <div id="pane-search" class="space-y-6">
                     <div class="relative">
                         <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search food items or your database additions..." class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:border-[#4CAF50] rounded-xl outline-none text-sm font-medium">
@@ -326,7 +306,6 @@
                         <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Recently Eaten</span>
                         <div id="recents-list" class="flex flex-wrap gap-2"></div>
                     </div>
-                    <!-- Proportional Scaling Workspace -->
                     <div id="scale-workspace" class="hidden p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-4">
                         <div class="flex justify-between items-center">
                             <span id="selected-food-name" class="font-bold text-gray-800 dark:text-gray-200">Selected Item</span>
@@ -349,7 +328,6 @@
                     </div>
                 </div>
 
-                <!-- TAB WORKSPACE B: Quick Custom Food Entry -->
                 <div id="pane-custom" class="space-y-4 hidden">
                     <p class="text-xs text-gray-400">Log an ad-hoc item straight to your daily dashboard timeline records without creating database listings.</p>
                     <div>
@@ -378,7 +356,6 @@
                     </div>
                 </div>
 
-                <!-- TAB WORKSPACE C: Persistent Database Editor Panel -->
                 <div id="pane-dbedit" class="space-y-4 hidden">
                     <p class="text-xs text-gray-400">Save a dynamic food record. It will immediately map to the autocomplete search engines and structural memory catalogs.</p>
                     <div>
@@ -417,7 +394,6 @@
                 </div>
             </div>
 
-            <!-- Modal Action Footer Control Strip -->
             <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800 flex gap-3">
                 <button onclick="closeLogModal()" class="flex-1 py-2.5 rounded-xl border dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm font-bold transition">Cancel</button>
                 <button id="add-meal-btn" disabled onclick="executeTabSubmission()" class="flex-1 py-2.5 rounded-xl bg-[#4CAF50] text-white text-sm font-bold opacity-40 cursor-not-allowed transition shadow-md">Add to Meal Tracker</button>
@@ -425,7 +401,6 @@
         </div>
     </div>
 
-    <!-- MAIN ENGINE CORE LOGIC SCRIPT -->
     <script>
         // Default values to seed empty systems
         const DEFAULT_FOOD_DATABASE = [
@@ -495,6 +470,20 @@
 
         function toggleDarkMode() {
             document.documentElement.classList.toggle('dark');
+        }
+
+        // --- NEW VISIBILITY TOGGLE LOGIC ---
+        function toggleDatabaseVisibility() {
+            const container = document.getElementById("database-catalog-view");
+            const btn = document.getElementById("toggle-db-btn");
+            
+            if (container.classList.contains("hidden")) {
+                container.classList.remove("hidden");
+                btn.innerText = "Hide List";
+            } else {
+                container.classList.add("hidden");
+                btn.innerText = "Show List";
+            }
         }
 
         function setGoalConfigMode(mode) {
