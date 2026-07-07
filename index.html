@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriSnap Pro - Advanced Nutrition Workspace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    boxShadow: {
+                        'premium': '0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 5px -1px rgba(0, 0, 0, 0.03)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased min-h-screen transition-colors duration-200">
+
+    <nav class="sticky top-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm px-6 py-4 flex items-center justify-between transition-colors">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-[#4CAF50] flex items-center justify-center text-white font-black text-xl shadow-sm">N</div>
+            <span class="text-xl font-bold tracking-tight text-gray-800 dark:text-white">
+                NutriSnap<span class="text-[#4CAF50] font-black">.</span>
+            </span>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/50 text-[#43A047] px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide">
+                <span class="w-2 h-2 rounded-full bg-[#43A047]"></span>
+                STREAK: 5 DAYS
+            </div>
+            <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition" title="Toggle Theme">
+                <svg id="theme-icon-light" class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.344l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg>
+                <svg id="theme-icon-dark" class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" strokeLinejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div class="lg:col-span-2 space-y-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 flex flex-col justify-between transition-colors">
+                        <div>
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Today's Calories</h3>
+                            <div class="mt-4 flex items-baseline gap-2">
+                                <span id="total-calories" class="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">0</span>
+                                <span class="text-gray-400 font-medium text-sm">/ <span id="goal-calories-text">2200</span> kcal</span>
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <div class="w-full bg-gray-100 dark:bg-gray-800 h-3 rounded-full overflow-hidden">
+                                <div id="calorie-progress-bar" class="bg-[#4CAF50] h-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between items-center mt-3 text-xs">
+                                <span id="calorie-remaining" class="font-semibold text-gray-500 dark:text-gray-400">2200 kcal left</span>
+                                <span class="text-gray-400 font-medium">Base Burn: 320 kcal</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 space-y-4 transition-colors">
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Macronutrients Target Performance</h3>
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-gray-700 dark:text-gray-300">Protein</span>
+                                <span id="protein-text" class="text-gray-500">0g / 150g</span>
+                            </div>
+                            <div class="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden"><div id="protein-bar" class="bg-[#2196F3] h-full transition-all" style="width: 0%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-gray-700 dark:text-gray-300">Carbohydrates</span>
+                                <span id="carbs-text" class="text-gray-500">0g / 250g</span>
+                            </div>
+                            <div class="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden"><div id="carbs-bar" class="bg-[#FB8C00] h-full transition-all" style="width: 0%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-gray-700 dark:text-gray-300">Fats</span>
+                                <span id="fats-text" class="text-gray-500">0g / 70g</span>
+                            </div>
+                            <div class="w-full bg-gray-100 dark:bg-gray-800 h-2 rounded-full overflow-hidden"><div id="fats-bar" class="bg-[#E53935] h-full transition-all" style="width: 0%"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h2 class="text-xl font-bold tracking-tight text-gray-800 dark:text-white">Today's Meal Records</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors">
+                            <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/30">
+                                <h3 class="font-bold text-gray-800 dark:text-gray-200">Breakfast</h3>
+                                <button onclick="openLogModal('Breakfast')" class="text-xs font-bold text-[#4CAF50] bg-white dark:bg-gray-800 border border-emerald-100 dark:border-emerald-950 px-3 py-1.5 rounded-xl hover:bg-[#4CAF50] hover:text-white dark:hover:bg-[#4CAF50] transition">+ Log</button>
+                            </div>
+                            <div id="meals-Breakfast" class="p-6 divide-y divide-gray-100 dark:divide-gray-800 min-h-[100px]"></div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors">
+                            <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/30">
+                                <h3 class="font-bold text-gray-800 dark:text-gray-200">Lunch</h3>
+                                <button onclick="openLogModal('Lunch')" class="text-xs font-bold text-[#4CAF50] bg-white dark:bg-gray-800 border border-emerald-100 dark:border-emerald-950 px-3 py-1.5 rounded-xl hover:bg-[#4CAF50] hover:text-white dark:hover:bg-[#4CAF50] transition">+ Log</button>
+                            </div>
+                            <div id="meals-Lunch" class="p-6 divide-y divide-gray-100 dark:divide-gray-800 min-h-[100px]"></div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors">
+                            <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/30">
+                                <h3 class="font-bold text-gray-800 dark:text-gray-200">Dinner</h3>
+                                <button onclick="openLogModal('Dinner')" class="text-xs font-bold text-[#4CAF50] bg-white dark:bg-gray-800 border border-emerald-100 dark:border-emerald-950 px-3 py-1.5 rounded-xl hover:bg-[#4CAF50] hover:text-white dark:hover:bg-[#4CAF50] transition">+ Log</button>
+                            </div>
+                            <div id="meals-Dinner" class="p-6 divide-y divide-gray-100 dark:divide-gray-800 min-h-[100px]"></div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors">
+                            <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/30">
+                                <h3 class="font-bold text-gray-800 dark:text-gray-200">Snacks</h3>
+                                <button onclick="openLogModal('Snacks')" class="text-xs font-bold text-[#4CAF50] bg-white dark:bg-gray-800 border border-emerald-100 dark:border-emerald-950 px-3 py-1.5 rounded-xl hover:bg-[#4CAF50] hover:text-white dark:hover:bg-[#4CAF50] transition">+ Log</button>
+                            </div>
+                            <div id="meals-Snacks" class="p-6 divide-y divide-gray-100 dark:divide-gray-800 min-h-[100px]"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 space-y-6 transition-colors">
+                    <div class="border-b border-gray-100 dark:border-gray-800 pb-3">
+                        <h3 class="text-sm font-black text-gray-800 dark:text-gray-200 uppercase tracking-wider">User Analytics Profile</h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Calculate or assign macro targets</p>
+                    </div>
+
+                    <div class="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl text-xs font-bold">
+                        <button id="mode-auto" onclick="setGoalConfigMode('auto')" class="flex-1 py-2 text-center rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-xs transition">Auto Calculate</button>
+                        <button id="mode-manual" onclick="setGoalConfigMode('manual')" class="flex-1 py-2 text-center rounded-lg text-gray-500 dark:text-gray-400 transition">Manual Target</button>
+                    </div>
+
+                    <div id="form-auto-panel" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Age</label>
+                                <input type="number" id="profile-age" value="28" class="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm rounded-xl outline-none focus:border-[#4CAF50]">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Gender</label>
+                                <select id="profile-gender" class="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm rounded-xl outline-none focus:border-[#4CAF50]">
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Height (cm)</label>
+                                <input type="number" id="profile-height" value="175" class="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm rounded-xl outline-none focus:border-[#4CAF50]">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Weight (kg)</label>
+                                <input type="number" id="profile-weight" value="75" class="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm rounded-xl outline-none focus:border-[#4CAF50]">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Activity Tier</label>
+                            <select id="profile-activity" class="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm rounded-xl outline-none focus:border-[#4CAF50]">
+                                <option value="1.2">Sedentary (Office job)</option>
+                                <option value="1.375" selected>Lightly Active (1-3 days/wk gym)</option>
+                                <option value="1.55">Moderately Active (3-5 days/wk training)</option>
+                                <option value="1.725">Highly Active (Heavy sports/construction)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Fitness Goal</label>
+                            <select id="profile-goal" class="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm rounded-xl outline-none focus:border-[#4CAF50]">
+                                <option value="-500">Weight Loss (Deficit)</option>
+                                <option value="0" selected>Maintain Weight</option>
+                                <option value="500">Weight Gain (Surplus)</option>
+                            </select>
+                        </div>
+                        
+                        <button onclick="calculateStagedMacros()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white text-xs font-bold rounded-xl transition shadow-sm">Calculate Required Macros</button>
+                        
+                        <div id="staged-results-box" class="hidden p-4 bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-xl space-y-3">
+                            <span class="text-[10px] font-black text-gray-400 uppercase block">Estimated Requirements Sheet</span>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div>Calories: <span id="staged-cals" class="font-bold text-gray-800 dark:text-white">--</span> kcal</div>
+                                <div>Protein: <span id="staged-pro" class="font-bold text-[#2196F3]">--</span></div>
+                                <div>Carbs: <span id="staged-carbs" class="font-bold text-[#FB8C00]">--</span></div>
+                                <div>Fat: <span id="staged-fat" class="font-bold text-[#E53935]">--</span></div>
+                            </div>
+                            <button onclick="applyStagedMacros()" class="w-full mt-2 py-1.5 bg-[#4CAF50] text-white text-[11px] font-bold rounded-lg hover:bg-[#43A047] transition">Apply as Active Targets</button>
+                        </div>
+                    </div>
+
+                    <div id="form-manual-panel" class="space-y-4 hidden">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Target Calories (kcal)</label>
+                            <input type="number" id="manual-cals" value="2200" class="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm rounded-xl outline-none focus:border-[#4CAF50]">
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-[10px] font-bold text-[#2196F3] uppercase block mb-1">Protein (g)</label>
+                                <input type="number" id="manual-pro" value="150" class="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 px-2 py-2 text-xs rounded-xl outline-none focus:border-[#2196F3]">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-[#FB8C00] uppercase block mb-1">Carbs (g)</label>
+                                <input type="number" id="manual-carbs" value="250" class="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 px-2 py-2 text-xs rounded-xl outline-none focus:border-[#FB8C00]">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-[#E53935] uppercase block mb-1">Fat (g)</label>
+                                <input type="number" id="manual-fat" value="70" class="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 px-2 py-2 text-xs rounded-xl outline-none focus:border-[#E53935]">
+                            </div>
+                        </div>
+                        <button onclick="applyManualTargets()" class="w-full py-2.5 bg-[#4CAF50] text-white text-xs font-bold rounded-xl hover:bg-[#43A047] transition">Apply Targets</button>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 space-y-4 transition-colors">
+                    <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3">
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Database Memory Storage</h3>
+                        <span id="db-count" class="text-xs px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 font-bold">5 Items</span>
+                    </div>
+                    <div id="database-catalog-view" class="max-h-72 overflow-y-auto space-y-2 pr-1 divide-y divide-gray-100 dark:divide-gray-800">
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-premium border border-gray-100 dark:border-gray-800 space-y-6 transition-colors">
+            <div class="border-b border-gray-100 dark:border-gray-800 pb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-black text-gray-800 dark:text-white uppercase tracking-tight">Performance Progress Analytics</h2>
+                    <p class="text-xs text-gray-400">Nutritional metrics patterns and customized entry trend graphs</p>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl px-4 py-2 border dark:border-gray-800 text-xs flex flex-wrap gap-x-4 gap-y-1">
+                    <div>Weekly Target Reserves: <span id="weekly-cal-target" class="font-bold text-gray-800 dark:text-white">--</span> kcal</div>
+                    <div>Protein: <span id="weekly-pro-target" class="font-bold text-[#2196F3]">--</span></div>
+                    <div>Carbs: <span id="weekly-carbs-target" class="font-bold text-[#FB8C00]">--</span></div>
+                    <div>Fat: <span id="weekly-fat-target" class="font-bold text-[#E53935]">--</span></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-gray-50 dark:bg-gray-950 p-4 rounded-xl border border-gray-100 dark:border-gray-800 flex flex-col justify-between">
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Macronutrient Intake Patterns</h4>
+                        <div class="h-64 relative w-full">
+                            <canvas id="macroTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-950 p-4 rounded-xl border border-gray-100 dark:border-gray-800 flex flex-col justify-between">
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Body Weight Index Curve (Long Trends)</h4>
+                        <div class="h-64 relative w-full">
+                            <canvas id="weightTrendChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 p-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl flex items-end gap-3 flex-wrap sm:flex-nowrap">
+                        <div class="w-full sm:w-auto flex-1">
+                            <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Date Logged</label>
+                            <input type="date" id="weight-log-date" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-1.5 text-xs rounded-lg outline-none">
+                        </div>
+                        <div class="w-full sm:w-auto flex-1">
+                            <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Weight Scale (kg)</label>
+                            <input type="number" step="0.1" id="weight-log-value" placeholder="e.g. 74.5" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-2 py-1.5 text-xs rounded-lg outline-none">
+                        </div>
+                        <button onclick="commitUserWeightRecord()" class="w-full sm:w-auto px-4 py-1.5 bg-[#4CAF50] text-white text-xs font-bold rounded-lg hover:bg-[#43A047] transition shadow-xs">Save Entry</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="log-modal" class="hidden fixed inset-0 z-50 bg-gray-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-xl w-full shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden flex flex-col transition-colors">
+            
+            <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+                <div>
+                    <h3 id="modal-title" class="font-extrabold text-gray-900 dark:text-white text-lg">Log Food Content</h3>
+                    <p class="text-xs text-gray-400 font-medium">Select entry method using options below</p>
+                </div>
+                <button onclick="closeLogModal()" class="p-1.5 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400">✕</button>
+            </div>
+
+            <div class="flex border-b border-gray-100 dark:border-gray-800 text-xs font-bold text-gray-500 bg-gray-50/50 dark:bg-gray-800/20">
+                <button id="tab-search" onclick="switchModalTab('search')" class="flex-1 py-3 text-center border-b-2 border-[#4CAF50] text-[#4CAF50]">Search Database</button>
+                <button id="tab-custom" onclick="switchModalTab('custom')" class="flex-1 py-3 text-center border-b-2 border-transparent hover:text-gray-700 dark:hover:text-gray-300">Quick Custom</button>
+                <button id="tab-dbedit" onclick="switchModalTab('dbedit')" class="flex-1 py-3 text-center border-b-2 border-transparent hover:text-gray-700 dark:hover:text-gray-300">Add to DB</button>
+            </div>
+
+            <div class="p-6 overflow-y-auto max-h-[60vh] space-y-6">
+                <div id="pane-search" class="space-y-6">
+                    <div class="relative">
+                        <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search food items or your database additions..." class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:border-[#4CAF50] rounded-xl outline-none text-sm font-medium">
+                    </div>
+                    <div id="search-results" class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl divide-y divide-gray-50 dark:divide-gray-700 max-h-40 overflow-y-auto hidden"></div>
+                    <div id="quick-recents-box" class="space-y-2">
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Recently Eaten</span>
+                        <div id="recents-list" class="flex flex-wrap gap-2"></div>
+                    </div>
+                    <div id="scale-workspace" class="hidden p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span id="selected-food-name" class="font-bold text-gray-800 dark:text-gray-200">Selected Item</span>
+                            <span id="base-info" class="text-xs text-gray-400"></span>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="flex-1 flex items-center border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl overflow-hidden">
+                                <button onclick="adjustQuantity(-25)" class="px-4 py-2 bg-gray-50 dark:bg-gray-800 font-bold">-</button>
+                                <input type="number" id="qty-input" oninput="calculateLiveSnapshot()" class="w-full text-center focus:outline-none font-bold text-sm bg-transparent">
+                                <button onclick="adjustQuantity(25)" class="px-4 py-2 bg-gray-50 dark:bg-gray-800 font-bold">+</button>
+                            </div>
+                            <span id="unit-label" class="bg-gray-100 dark:bg-gray-800 px-4 py-2.5 rounded-xl text-xs font-bold flex items-center text-gray-600 dark:text-gray-300">grams</span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2 text-center pt-2">
+                            <div class="bg-white dark:bg-gray-900 p-2 rounded-xl border dark:border-gray-700"><p class="text-[10px] font-bold text-gray-400 uppercase">Calories</p><p id="live-cals" class="text-sm font-black text-[#4CAF50]">0</p></div>
+                            <div class="bg-white dark:bg-gray-900 p-2 rounded-xl border dark:border-gray-700"><p class="text-[10px] font-bold text-gray-400 uppercase">Protein</p><p id="live-pro" class="text-sm font-black text-[#2196F3]">0g</p></div>
+                            <div class="bg-white dark:bg-gray-900 p-2 rounded-xl border dark:border-gray-700"><p class="text-[10px] font-bold text-gray-400 uppercase">Carbs</p><p id="live-carbs" class="text-sm font-black text-[#FB8C00]">0g</p></div>
+                            <div class="bg-white dark:bg-gray-900 p-2 rounded-xl border dark:border-gray-700"><p class="text-[10px] font-bold text-gray-400 uppercase">Fat</p><p id="live-fat" class="text-sm font-black text-[#E53935]">0g</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pane-custom" class="space-y-4 hidden">
+                    <p class="text-xs text-gray-400">Log an ad-hoc item straight to your daily dashboard timeline records without creating database listings.</p>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Food Name Description</label>
+                        <input type="text" id="custom-name" placeholder="e.g. Grandma's Special Salad Mix" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl outline-none text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Calories (kcal)</label>
+                            <input type="number" id="custom-cals" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-[#2196F3] uppercase tracking-wider block mb-1">Protein (g)</label>
+                            <input type="number" id="custom-pro" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl outline-none text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] font-bold text-[#FB8C00] uppercase tracking-wider block mb-1">Carbs (g)</label>
+                            <input type="number" id="custom-carbs" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-[#E53935] uppercase tracking-wider block mb-1">Fat (g)</label>
+                            <input type="number" id="custom-fat" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl outline-none text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pane-dbedit" class="space-y-4 hidden">
+                    <p class="text-xs text-gray-400">Save a dynamic food record. It will immediately map to the autocomplete search engines and structural memory catalogs.</p>
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Food Item Name</label>
+                        <input type="text" id="db-name" placeholder="e.g. Premium Peanut Butter" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl outline-none text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Base Size Quantity</label>
+                            <input type="number" id="db-qty" value="100" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Measurement Unit</label>
+                            <input type="text" id="db-unit" value="grams" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl outline-none text-sm">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div>
+                            <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">Cals</label>
+                            <input type="number" id="db-cals" class="w-full px-2 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl outline-none text-xs">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-[#2196F3] uppercase block mb-1">Pro</label>
+                            <input type="number" id="db-pro" class="w-full px-2 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl outline-none text-xs">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-[#FB8C00] uppercase block mb-1">Carbs</label>
+                            <input type="number" id="db-carbs" class="w-full px-2 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl outline-none text-xs">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-[#E53935] uppercase block mb-1">Fat</label>
+                            <input type="number" id="db-fat" class="w-full px-2 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl outline-none text-xs">
+                        </div>
+                    </div>
+                    <button id="db-commit-btn" onclick="commitFoodToDatabaseMemory()" class="w-full py-2.5 bg-[#2196F3] hover:bg-blue-600 text-white text-xs font-bold rounded-xl transition shadow-xs">Save Item to Memory Records</button>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-100 dark:border-gray-800 flex gap-3">
+                <button onclick="closeLogModal()" class="flex-1 py-2.5 rounded-xl border dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm font-bold transition">Cancel</button>
+                <button id="add-meal-btn" disabled onclick="executeTabSubmission()" class="flex-1 py-2.5 rounded-xl bg-[#4CAF50] text-white text-sm font-bold opacity-40 cursor-not-allowed transition shadow-md">Add to Meal Tracker</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Local Data Stores
+        let FOOD_DATABASE = [
+            { id: "f1", name: "Chicken Breast", baseQty: 100, baseUnit: "grams", calories: 165, protein: 31, carbs: 0, fat: 3.6 },
+            { id: "f2", name: "White Rice (Cooked)", baseQty: 150, baseUnit: "grams", calories: 195, protein: 4, carbs: 42, fat: 0.4 },
+            { id: "f3", name: "Whole Egg", baseQty: 1, baseUnit: "piece", calories: 70, protein: 6, carbs: 0.5, fat: 5 },
+            { id: "f4", name: "Banana", baseQty: 1, baseUnit: "piece", calories: 105, protein: 1.3, carbs: 27, fat: 0.3 },
+            { id: "f5", name: "Whole Milk", baseQty: 250, baseUnit: "ml", calories: 150, protein: 8, carbs: 12, fat: 8 }
+        ];
+
+        let currentCategory = "Breakfast";
+        let activeSelectedFood = null;
+        let activeModalTab = "search";
+        let configMode = "auto"; 
+        let editingFoodId = null; // Track database item currently undergoing updates
+
+        // Active Target Rules State Configurations
+        let currentTargets = { cals: 2200, pro: 150, carbs: 250, fat: 70 };
+        let stagedTargets = null; 
+
+        let loggedMeals = [
+            { id: "l1", category: "Breakfast", name: "Whole Egg", qty: 2, unit: "piece", cals: 140, pro: 12, carbs: 1, fat: 10, time: "08:15 AM" },
+            { id: "l2", category: "Breakfast", name: "Whole Milk", qty: 250, unit: "ml", cals: 150, pro: 8, carbs: 12, fat: 8, time: "08:30 AM" }
+        ];
+
+        // Seeding Macro Historical Storage
+        const historicalLabels = ["Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Today"];
+        let historicalMacros = {
+            protein: [142, 148, 155, 138, 160, 145, 20],
+            carbs: [230, 245, 260, 210, 240, 255, 13],
+            fat: [68, 72, 65, 78, 69, 71, 18]
+        };
+
+        // Long Trend Pure User-Generated Weight Storage Array (Requirement 2)
+        let customWeightTimeline = [
+            { date: "2026-07-01", weight: 75.5 },
+            { date: "2026-07-03", weight: 75.1 },
+            { date: "2026-07-05", weight: 74.8 }
+        ];
+
+        // Chart.js Pointers Instance Maps
+        let macroChartInstance = null;
+        let weightChartInstance = null;
+
+        window.onload = function() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+            // Set dynamic current date as base inside the entry logger
+            document.getElementById("weight-log-date").value = new Date().toISOString().split('T')[0];
+            
+            renderDashboard();
+            renderCatalogList();
+            buildFavoritesQuickBar();
+            initAnalyticsCharts();
+        };
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function setGoalConfigMode(mode) {
+            configMode = mode;
+            const autoBtn = document.getElementById("mode-auto");
+            const manualBtn = document.getElementById("mode-manual");
+            const autoPanel = document.getElementById("form-auto-panel");
+            const manualPanel = document.getElementById("form-manual-panel");
+
+            if(mode === 'auto') {
+                autoBtn.className = "flex-1 py-2 text-center rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-xs transition";
+                manualBtn.className = "flex-1 py-2 text-center rounded-lg text-gray-500 dark:text-gray-400 transition";
+                autoPanel.classList.remove("hidden");
+                manualPanel.classList.add("hidden");
+            } else {
+                manualBtn.className = "flex-1 py-2 text-center rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white shadow-xs transition";
+                autoBtn.className = "flex-1 py-2 text-center rounded-lg text-gray-500 dark:text-gray-400 transition";
+                manualPanel.classList.remove("hidden");
+                autoPanel.classList.add("hidden");
+            }
+        }
+
+        function calculateStagedMacros() {
+            const age = parseFloat(document.getElementById("profile-age").value) || 25;
+            const gender = document.getElementById("profile-gender").value;
+            const height = parseFloat(document.getElementById("profile-height").value) || 170;
+            const weight = parseFloat(document.getElementById("profile-weight").value) || 70;
+            const activity = parseFloat(document.getElementById("profile-activity").value) || 1.2;
+            const goalModifier = parseFloat(document.getElementById("profile-goal").value) || 0;
+
+            let bmr = (10 * weight) + (6.25 * height) - (5 * age);
+            bmr = (gender === "male") ? bmr + 5 : bmr - 161;
+
+            let tdee = Math.round(bmr * activity);
+            let targetCals = Math.max(1200, tdee + goalModifier);
+
+            let targetProtein = Math.round((targetCals * 0.30) / 4);
+            let targetCarbs = Math.round((targetCals * 0.40) / 4);
+            let targetFat = Math.round((targetCals * 0.30) / 9);
+
+            stagedTargets = { cals: targetCals, pro: targetProtein, carbs: targetCarbs, fat: targetFat };
+
+            document.getElementById("staged-cals").innerText = targetCals;
+            document.getElementById("staged-pro").innerText = `${targetProtein}g`;
+            document.getElementById("staged-carbs").innerText = `${targetCarbs}g`;
+            document.getElementById("staged-fat").innerText = `${targetFat}g`;
+            document.getElementById("staged-results-box").classList.remove("hidden");
+        }
+
+        function applyStagedMacros() {
+            if (!stagedTargets) return;
+            currentTargets = { ...stagedTargets };
+            renderDashboard();
+            updateCalculatedWeeklyCards();
+            alert("Calculated profile targets applied successfully.");
+        }
+
+        function applyManualTargets() {
+            const cals = parseInt(document.getElementById("manual-cals").value) || 2000;
+            const pro = parseInt(document.getElementById("manual-pro").value) || 130;
+            const carbs = parseInt(document.getElementById("manual-carbs").value) || 200;
+            const fat = parseInt(document.getElementById("manual-fat").value) || 65;
+
+            currentTargets = { cals, pro, carbs, fat };
+            renderDashboard();
+            updateCalculatedWeeklyCards();
+            alert("Manual target parameters applied successfully.");
+        }
+
+        // Render Database Catalog with Edit/Delete Actions (Requirement 1)
+        function renderCatalogList() {
+            const container = document.getElementById("database-catalog-view");
+            document.getElementById("db-count").innerText = `${FOOD_DATABASE.length} Items`;
+
+            container.innerHTML = FOOD_DATABASE.map(food => `
+                <div class="py-3 text-xs flex items-center justify-between gap-2 text-gray-600 dark:text-gray-400 group">
+                    <div class="flex-1 min-w-0 space-y-0.5">
+                        <div class="flex items-baseline gap-1.5 flex-wrap">
+                            <span class="font-bold text-gray-800 dark:text-gray-200 truncate max-w-[130px] sm:max-w-none">${food.name}</span>
+                            <span class="text-[#4CAF50] font-semibold">${food.calories} kcal <span class="font-normal text-gray-400 text-[10px]">/${food.baseQty}${food.baseUnit[0]}</span></span>
+                        </div>
+                        <div class="flex gap-2.5 font-semibold text-[10px] tracking-wide">
+                            <span class="text-blue-500">P: ${food.protein}g</span>
+                            <span class="text-amber-500">C: ${food.carbs}g</span>
+                            <span class="text-red-500">F: ${food.fat}g</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="triggerEditDatabaseItem('${food.id}')" class="p-1 text-gray-400 hover:text-blue-500 transition" title="Edit Item">📝</button>
+                        <button onclick="triggerDeleteDatabaseItem('${food.id}')" class="p-1 text-gray-400 hover:text-red-500 transition" title="Delete Item">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function triggerDeleteDatabaseItem(id) {
+            if(confirm("Are you sure you want to completely remove this item from the active database storage parameters?")) {
+                FOOD_DATABASE = FOOD_DATABASE.filter(f => f.id !== id);
+                renderCatalogList();
+                buildFavoritesQuickBar();
+            }
+        }
+
+        function triggerEditDatabaseItem(id) {
+            const target = FOOD_DATABASE.find(f => f.id === id);
+            if(!target) return;
+
+            editingFoodId = id;
+            openLogModal("Database Update");
+            switchModalTab('dbedit');
+
+            // Prepopulate form configuration parameters
+            document.getElementById("db-name").value = target.name;
+            document.getElementById("db-qty").value = target.baseQty;
+            document.getElementById("db-unit").value = target.baseUnit;
+            document.getElementById("db-cals").value = target.calories;
+            document.getElementById("db-pro").value = target.protein;
+            document.getElementById("db-carbs").value = target.carbs;
+            document.getElementById("db-fat").value = target.fat;
+
+            document.getElementById("db-commit-btn").innerText = "Update Item parameters";
+        }
+
+        function renderDashboard() {
+            document.getElementById("goal-calories-text").innerText = currentTargets.cals;
+            
+            let totals = loggedMeals.reduce((acc, item) => {
+                acc.cals += item.cals;
+                acc.pro += item.pro;
+                acc.carbs += item.carbs;
+                acc.fat += item.fat;
+                return acc;
+            }, { cals: 0, pro: 0, carbs: 0, fat: 0 });
+
+            document.getElementById("total-calories").innerText = Math.round(totals.cals);
+            document.getElementById("calorie-remaining").innerText = `${Math.max(0, currentTargets.cals - Math.round(totals.cals))} kcal left`;
+            document.getElementById("calorie-progress-bar").style.width = `${Math.min((totals.cals / currentTargets.cals) * 100, 100)}%`;
+
+            document.getElementById("protein-text").innerText = `${Math.round(totals.pro)}g / ${currentTargets.pro}g`;
+            document.getElementById("protein-bar").style.width = `${Math.min((totals.pro / currentTargets.pro) * 100, 100)}%`;
+
+            document.getElementById("carbs-text").innerText = `${Math.round(totals.carbs)}g / ${currentTargets.carbs}g`;
+            document.getElementById("carbs-bar").style.width = `${Math.min((totals.carbs / currentTargets.carbs) * 100, 100)}%`;
+
+            document.getElementById("fats-text").innerText = `${Math.round(totals.fat)}g / ${currentTargets.fat}g`;
+            document.getElementById("fats-bar").style.width = `${Math.min((totals.fat / currentTargets.fat) * 100, 100)}%`;
+
+            historicalMacros.protein[historicalMacros.protein.length - 1] = Math.round(totals.pro);
+            historicalMacros.carbs[historicalMacros.carbs.length - 1] = Math.round(totals.carbs);
+            historicalMacros.fat[historicalMacros.fat.length - 1] = Math.round(totals.fat);
+            
+            if(macroChartInstance) macroChartInstance.update();
+
+            renderTimelineCategories();
+        }
+
+        function updateCalculatedWeeklyCards() {
+            document.getElementById("weekly-cal-target").innerText = (currentTargets.cals * 7).toLocaleString();
+            document.getElementById("weekly-pro-target").innerText = `${(currentTargets.pro * 7).toLocaleString()}g`;
+            document.getElementById("weekly-carbs-target").innerText = `${(currentTargets.carbs * 7).toLocaleString()}g`;
+            document.getElementById("weekly-fat-target").innerText = `${(currentTargets.fat * 7).toLocaleString()}g`;
+        }
+
+        function renderTimelineCategories() {
+            ["Breakfast", "Lunch", "Dinner", "Snacks"].forEach(cat => {
+                const container = document.getElementById(`meals-${cat}`);
+                const items = loggedMeals.filter(m => m.category === cat);
+                
+                if(items.length === 0) {
+                    container.innerHTML = `<div class="h-16 flex items-center justify-center text-xs text-gray-400 italic">No food logged</div>`;
+                    return;
+                }
+
+                container.innerHTML = items.map(item => `
+                    <div class="py-3 flex items-center justify-between group">
+                        <div class="pr-2">
+                            <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">${item.name}</h4>
+                            <p class="text-xs text-gray-400 mt-0.5">${item.qty > 0 ? item.qty + ' ' + item.unit : 'Custom Entry'} • ${item.time}</p>
+                            <div class="flex flex-wrap gap-2 mt-1 text-[10px] font-bold text-gray-400">
+                                <span class="text-blue-500">P: ${item.pro}g</span>
+                                <span class="text-amber-500">C: ${item.carbs}g</span>
+                                <span class="text-red-500">F: ${item.fat}g</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-sm font-extrabold text-gray-900 dark:text-white">${item.cals} kcal</span>
+                            <button onclick="deleteLoggedItem('${item.id}')" class="text-gray-300 hover:text-red-600 transition text-xs font-bold">✕</button>
+                        </div>
+                    </div>
+                `).join('');
+            });
+        }
+
+        function switchModalTab(tabId) {
+            activeModalTab = tabId;
+            const tabs = ['search', 'custom', 'dbedit'];
+            
+            tabs.forEach(t => {
+                const tabEl = document.getElementById(`tab-${t}`);
+                const paneEl = document.getElementById(`pane-${t}`);
+                if (t === tabId) {
+                    tabEl.className = "flex-1 py-3 text-center border-b-2 border-[#4CAF50] text-[#4CAF50]";
+                    paneEl.classList.remove("hidden");
+                } else {
+                    tabEl.className = "flex-1 py-3 text-center border-b-2 border-transparent hover:text-gray-700 dark:hover:text-gray-300";
+                    paneEl.classList.add("hidden");
+                }
+            });
+
+            const btn = document.getElementById("add-meal-btn");
+            if (tabId === "search" && !activeSelectedFood) {
+                btn.disabled = true;
+                btn.className = "flex-1 py-2.5 rounded-xl bg-[#4CAF50] text-white text-sm font-bold opacity-40 cursor-not-allowed transition shadow-md";
+            } else {
+                btn.disabled = false;
+                btn.className = "flex-1 py-2.5 rounded-xl bg-[#4CAF50] hover:bg-[#43A047] text-white text-sm font-bold transition shadow-md";
+            }
+        }
+
+        function openLogModal(category) {
+            currentCategory = category;
+            document.getElementById("modal-title").innerText = `Log to ${category}`;
+            switchModalTab('search');
+            
+            document.getElementById("search-input").value = "";
+            document.getElementById("scale-workspace").classList.add("hidden");
+            document.getElementById("custom-name").value = "";
+            document.getElementById("custom-cals").value = "";
+            document.getElementById("custom-pro").value = "";
+            document.getElementById("custom-carbs").value = "";
+            document.getElementById("custom-fat").value = "";
+
+            // Reset tab edit parameters
+            editingFoodId = null;
+            document.getElementById("db-commit-btn").innerText = "Save Item to Memory Records";
+            document.getElementById("db-name").value = "";
+            document.getElementById("db-cals").value = "";
+            document.getElementById("db-pro").value = "";
+            document.getElementById("db-carbs").value = "";
+            document.getElementById("db-fat").value = "";
+
+            document.getElementById("log-modal").classList.remove("hidden");
+        }
+
+        function closeLogModal() {
+            document.getElementById("log-modal").classList.add("hidden");
+        }
+
+        function buildFavoritesQuickBar() {
+            const list = document.getElementById("recents-list");
+            list.innerHTML = FOOD_DATABASE.slice(0, 3).map(food => `
+                <button onclick="selectFoodItem('${food.id}')" class="px-3 py-1.5 rounded-xl border text-xs font-bold bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition shadow-sm">
+                    ${food.name}
+                </button>
+            `).join('');
+        }
+
+        function handleSearch() {
+            const query = document.getElementById("search-input").value.toLowerCase();
+            const resultsBox = document.getElementById("search-results");
+            
+            if(!query) {
+                resultsBox.classList.add("hidden");
+                return;
+            }
+
+            const matched = FOOD_DATABASE.filter(f => f.name.toLowerCase().includes(query));
+            if(matched.length === 0) {
+                resultsBox.innerHTML = `<div class="p-3 text-xs text-gray-400 italic text-center">No results found</div>`;
+            } else {
+                resultsBox.innerHTML = matched.map(food => `
+                    <button onclick="selectFoodItem('${food.id}')" class="w-full text-left px-4 py-2.5 text-sm font-semibold flex justify-between items-center hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition text-gray-700 dark:text-gray-300">
+                        <span>${food.name}</span>
+                        <span class="text-xs font-normal text-gray-400">${food.calories} kcal</span>
+                    </button>
+                `).join('');
+            }
+            resultsBox.classList.remove("hidden");
+        }
+
+        function selectFoodItem(foodId) {
+            const food = FOOD_DATABASE.find(f => f.id === foodId);
+            if(!food) return;
+
+            activeSelectedFood = food;
+            document.getElementById("search-results").classList.add("hidden");
+            document.getElementById("selected-food-name").innerText = food.name;
+            document.getElementById("base-info").innerText = `Base: ${food.baseQty} ${food.baseUnit}`;
+            document.getElementById("qty-input").value = food.baseQty;
+            document.getElementById("unit-label").innerText = food.baseUnit;
+            document.getElementById("scale-workspace").classList.remove("hidden");
+
+            const btn = document.getElementById("add-meal-btn");
+            btn.disabled = false;
+            btn.className = "flex-1 py-2.5 rounded-xl bg-[#4CAF50] hover:bg-[#43A047] text-white text-sm font-bold transition shadow-md";
+
+            calculateLiveSnapshot();
+        }
+
+        function adjustQuantity(offset) {
+            const input = document.getElementById("qty-input");
+            let currentVal = parseFloat(input.value) || 0;
+            input.value = Math.max(0, currentVal + offset);
+            calculateLiveSnapshot();
+        }
+
+        function calculateLiveSnapshot() {
+            if(!activeSelectedFood) return;
+            const inputQty = parseFloat(document.getElementById("qty-input").value) || 0;
+            const multiplier = inputQty / activeSelectedFood.baseQty;
+
+            document.getElementById("live-cals").innerText = Math.round(activeSelectedFood.calories * multiplier);
+            document.getElementById("live-pro").innerText = `${(activeSelectedFood.protein * multiplier).toFixed(1)}g`;
+            document.getElementById("live-carbs").innerText = `${(activeSelectedFood.carbs * multiplier).toFixed(1)}g`;
+            document.getElementById("live-fat").innerText = `${(activeSelectedFood.fat * multiplier).toFixed(1)}g`;
+        }
+
+        // Handles both Creation & Mutation operations for Database targets (Requirement 1)
+        function commitFoodToDatabaseMemory() {
+            const name = document.getElementById("db-name").value.trim();
+            const qty = parseFloat(document.getElementById("db-qty").value) || 100;
+            const unit = document.getElementById("db-unit").value.trim() || "grams";
+            const cals = parseFloat(document.getElementById("db-cals").value) || 0;
+            const pro = parseFloat(document.getElementById("db-pro").value) || 0;
+            const carbs = parseFloat(document.getElementById("db-carbs").value) || 0;
+            const fat = parseFloat(document.getElementById("db-fat").value) || 0;
+
+            if(!name) { alert("Please provide a valid item name."); return; }
+
+            if (editingFoodId) {
+                // Mutate selected data target row indices
+                const matchIndex = FOOD_DATABASE.findIndex(f => f.id === editingFoodId);
+                if(matchIndex !== -1) {
+                    FOOD_DATABASE[matchIndex] = { id: editingFoodId, name, baseQty: qty, baseUnit: unit, calories: cals, protein: pro, carbs, fat };
+                    alert(`"${name}" successfully updated within database configuration rows.`);
+                }
+                editingFoodId = null;
+            } else {
+                // Append standard unique memory trace items
+                const newDbItem = { id: "f_" + Date.now(), name, baseQty: qty, baseUnit: unit, calories: cals, protein: pro, carbs, fat };
+                FOOD_DATABASE.push(newDbItem);
+                alert(`"${name}" successfully appended to database records.`);
+            }
+            
+            document.getElementById("db-name").value = "";
+            renderCatalogList();
+            buildFavoritesQuickBar();
+            closeLogModal();
+        }
+
+        function executeTabSubmission() {
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            let newItem = { id: "item_" + Date.now(), category: currentCategory, time: timeStr };
+
+            if (activeModalTab === 'search') {
+                if(!activeSelectedFood) return;
+                const inputQty = parseFloat(document.getElementById("qty-input").value) || 0;
+                const mult = inputQty / activeSelectedFood.baseQty;
+                newItem = { ...newItem, name: activeSelectedFood.name, qty: inputQty, unit: activeSelectedFood.baseUnit, cals: Math.round(activeSelectedFood.calories * mult), pro: parseFloat((activeSelectedFood.protein * mult).toFixed(1)), carbs: parseFloat((activeSelectedFood.carbs * mult).toFixed(1)), fat: parseFloat((activeSelectedFood.fat * mult).toFixed(1)) };
+            
+            } else if (activeModalTab === 'custom') {
+                const name = document.getElementById("custom-name").value.trim() || "Custom Item";
+                const cals = Math.round(parseFloat(document.getElementById("custom-cals").value) || 0);
+                const pro = parseFloat(document.getElementById("custom-pro").value) || 0;
+                const carbs = parseFloat(document.getElementById("custom-carbs").value) || 0;
+                const fat = parseFloat(document.getElementById("custom-fat").value) || 0;
+                newItem = { ...newItem, name, qty: 0, unit: "custom tracking", cals, pro, carbs, fat };
+            } else {
+                return;
+            }
+
+            loggedMeals.push(newItem);
+            closeLogModal();
+            renderDashboard();
+        }
+
+        function deleteLoggedItem(id) {
+            loggedMeals = loggedMeals.filter(m => m.id !== id);
+            renderDashboard();
+        }
+
+        // Pure User Entered Long Term Weight Tracking Logic (Requirement 2)
+        function commitUserWeightRecord() {
+            const dateInput = document.getElementById("weight-log-date").value;
+            const weightVal = parseFloat(document.getElementById("weight-log-value").value);
+
+            if(!dateInput || isNaN(weightVal) || weightVal <= 0) {
+                alert("Please declare accurate date and numerical body weight parameters.");
+                return;
+            }
+
+            // Check if date intersection matches an existing data row, overwrite if necessary, otherwise insert
+            const existingIndex = customWeightTimeline.findIndex(w => w.date === dateInput);
+            if(existingIndex !== -1) {
+                customWeightTimeline[existingIndex].weight = weightVal;
+            } else {
+                customWeightTimeline.push({ date: dateInput, weight: weightVal });
+            }
+
+            // Sort chronology pipeline systematically
+            customWeightTimeline.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            // Clean data values back to baseline defaults
+            document.getElementById("weight-log-value").value = "";
+
+            // Re-render chart dataset configuration profiles
+            updateWeightChartDataEngine();
+        }
+
+        function updateWeightChartDataEngine() {
+            if(!weightChartInstance) return;
+
+            // Map purely from the custom array structures
+            const newLabels = customWeightTimeline.map(item => {
+                // Shorten formats from 2026-07-01 to simpler 07/01 string parameters for easier UI scaling
+                const parts = item.date.split("-");
+                return parts.length === 3 ? `${parts[1]}/${parts[2]}` : item.date;
+            });
+            const newDataPoints = customWeightTimeline.map(item => item.weight);
+
+            weightChartInstance.data.labels = newLabels;
+            weightChartInstance.data.datasets[0].data = newDataPoints;
+            weightChartInstance.update();
+        }
+
+        // --- CHARTJS INFRASTRUCTURE PANEL LIFECYCLE ---
+        function initAnalyticsCharts() {
+            updateCalculatedWeeklyCards();
+
+            // 1. Macro Trend Stacked Bar Canvas Setup
+            const ctxMacro = document.getElementById('macroTrendChart').getContext('2d');
+            macroChartInstance = new Chart(ctxMacro, {
+                type: 'bar',
+                data: {
+                    labels: historicalLabels,
+                    datasets: [
+                        { label: 'Protein (g)', data: historicalMacros.protein, backgroundColor: '#2196F3' },
+                        { label: 'Carbs (g)', data: historicalMacros.carbs, backgroundColor: '#FB8C00' },
+                        { label: 'Fat (g)', data: historicalMacros.fat, backgroundColor: '#E53935' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { stacked: true, beginAtZero: true }
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { boxWidth: 12, font: { weight: 'bold', size: 10 } } }
+                    }
+                }
+            });
+
+            // 2. Body Weight Long Term Performance Trend Line Initialization (Requirement 2)
+            const ctxWeight = document.getElementById('weightTrendChart').getContext('2d');
+            weightChartInstance = new Chart(ctxWeight, {
+                type: 'line',
+                data: {
+                    labels: [], // Populated purely via engine mapping loops
+                    datasets: [{
+                        label: 'Weight Data History (kg)',
+                        data: [],
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.08)',
+                        borderWidth: 3,
+                        tension: 0.25,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        pointBackgroundColor: '#4CAF50'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: false }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Parse initial arrays through standard sorting/rendering logic
+            updateWeightChartDataEngine();
+        }
+    </script>
+</body>
+</html>
